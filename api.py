@@ -25,7 +25,7 @@ async def get_mkey(platform: str, month: int, day: int, inquiry: str):
         raise HTTPException(status_code=501, detail=f"{platform} is not implemented.")
     master_key = None
     try:
-        master_key = generator.generate(inquiry, month, day, platform)
+        master_key = generator.generate(inquiry=inquiry, month=month, day=day, device=platform)
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"key": master_key}
