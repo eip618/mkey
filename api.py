@@ -16,7 +16,7 @@ import mkey
 app = FastAPI()
 
 
-@app.get("/{platform}/{month}/{day}/{inquiry}")
+@app.get("/{platform}/{inquiry}/{month}/{day}")
 async def get_mkey(platform: str, month: int, day: int, inquiry: str):
 
     generator = mkey.mkey_generator(debug=False)
