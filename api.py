@@ -21,7 +21,7 @@ async def get_mkey(platform: str, month: int, day: int, inquiry: str):
 
     generator = mkey.mkey_generator(debug=False)
 
-    if platform not in ["RVL", "TWL", "CTR"]:
+    if platform not in ["RVL", "TWL", "CTR", "WUP"]:
         raise HTTPException(status_code=501, detail=f"{platform} is not implemented.")
     master_key = None
     try:
