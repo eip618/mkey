@@ -1,14 +1,13 @@
-Only intended for firm 11.15/11.16 for regions US,EU,JP,KR.
-Otherwise, https://mkey.salthax.org/ should still work fine.
-This version is only needed because the above site hasn't update its 11.16 masterkey.bin's for the 4 regions.
-
 Steps for updating this tool for newer firmwares:
 
-1. Skip this step unless MSET (system settings) updates. Get the Aes key for US,EU,JP,KR is at mset virtual addr. 0x0026b35c (code.bin+0x0016b35c). Paste the 16 bytes to a file named: ctr_aes_0?.bin, where ? is region code: 1=US, 2=EU, 5=KR, 9=JP.
+1. Skip this step unless the unlikely event MSET (system settings) updates AND there's a new aes key (hasn't happened yet in algorithm v2). Get the aes key for US,EU,JP,KR at mset virtual addr. 0x0026b35c, code.bin+0x0016b35c (this version is found in firmwares 11.5-11.16). Paste the 16 bytes to a file named: ctr_aes_0?.bin, where ? is region code: 1=US, 2=EU, 5=KR, 9=JP.
 
 2. While in Godmode9, masterkey.bin is found by navigating to SYSNAND CTRNAND/title/000400db/00017X02/content/000000??.app, then Press A -> Ncch image options -> Mount image to drive -> romfs/masterkey.bin -> Press A -> Copy to 0:/gm9/out. Then find the file in SDMC:/gm9/out/masterkey.bin. This needs to be done for all 4 regions as well. The X in the titleID low (/00017X02/ above) of CVER varies by region. It's not important. You may also use 3Dnus and ctrtool to extract the masterkey.bin. Consult those apps for instructions.
 
 3. Rename masterkey.bin to ctr_XX_YY.bin where XX is the first byte (in hex) in the same file, and YY is the second byte in the file (also hex). Put these 4 renamed files in the data folder and the new firmware should now be supported.
 
 
-Note: TWN and CHN have horribly outdated msets, so there is no masterkey.bin because they use an older mkey algorithm. https://mkey.salthax.org/ should still support them even when firmware updates.
+Notes: 
+TWN and CHN have horribly outdated msets and thus only use algorithm v0 for all firm versions, which requires no data files.
+KOR uses algorithm version v0 up to 9.5 and skips v1 entirely, using v2 for 9.6 to latest.
+USA,EUR,JPN use all 3 algorithms as described here: https://www.3dbrew.org/wiki/System_Settings#Parental_Controls_Reset
