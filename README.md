@@ -1,6 +1,6 @@
 ## Offline version - 3DS
 This fork of the upstream repo is intended to be temp backup of the 3DS parental control unlocker tool mkey.salthax.org in case the site does not quickly update with latest 3DS firmware (which is often the case). It is intended to be run offline. </br>
-Compatible with: 11.15-11.16 US,EU,JP,KR</br>
+Compatible with: 1.0-11.16 US,EU,JP,KR,TW,CN</br>
 - You need python3 installed and windows. 
 - Attempt to unlock your parental controls from your 3DS's System Settings until it gives you an "Inquiry Number" (chose "I forgot" twice).
 - Next, read the rem comments in the "mkey.bat" script in a text editor for the remaining instructions, then run the same .bat script. 
@@ -37,3 +37,4 @@ ctr.c, ctr.h, utils.c and utils.h are taken from [ctrtool](https://github.com/pr
 * marcan for the Wii reset tool: https://wii.marcan.st/parental
 * neimod for the 3DS v0 reset tool: https://github.com/3dshax/ctr/commit/bcb3734b9a26d0fe7ef66f7d3814406fee797303
 * SALT greetz: WulfyStylez and Shiny Quagsire (^:
+* lifehackerhansol: getting the rest of the old masterkeys and a handy CVER scraper script
