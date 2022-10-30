@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="//eiphax.tech/favicon.ico"/>
+        <title>eiphax | mkey generator</title>
+
+        <style>
+            body   { font-family: Calibri, Verdana, Sans-Serif; }
+            form   { display: table; border-collapse: separate; border-spacing: 0px 10px; }
+            p      { display: table-row; }
+            label  { display: table-cell; padding-right:10px; }
+            select { display: table-cell; margin-right:2px; }
+            input  { display: table-cell; margin-right:2px; }
+            ul     { margin-top: 5px; }
+            input[type="text"] { width: 127px; }
+            input[type="checkbox"] { height: 10px; width: 10px; vertical-align: middle; margin-top: -1px; }
+        </style>
+    </head>
+    <body>
+
+        <h1>mkey generator</h1>
+        <h4>DSi/ 3DS / Wii / Wii U / Switch parental controls master key generator.<br>
+
+        <form action="/" method="GET">
+            <p>
+                <label>Device type: </label>
+                <select name="platform" id="platform" onchange="" size="1">
+                    <option value="CTR" selected>3DS
+                    <option value="WUP">Wii U
+                    <option value="TWL">DSi
+                    <option value="RVL">Wii
+                    <option value="HAC">Switch
+                </select>
+            </p>
+
+            <p>
+                <label>System date: </label>
+                <select name="month" id="month" onchange="" size="1">
+                    <option value="01">January
+                    <option value="02">February
+                    <option value="03">March
+                    <option value="04">April
+                    <option value="05">May
+                    <option value="06">June
+                    <option value="07">July
+                    <option value="08">August
+                    <option value="09">September
+                    <option value="10">October
+                    <option value="11">November
+                    <option value="12">December
+                </select>
+
+                <select name="day" id="day" onchange="" size="1">
+                    <option value="01">01
+                    <option value="02">02
+                    <option value="03">03
+                    <option value="04">04
+                    <option value="05">05
+                    <option value="06">06
+                    <option value="07">07
+                    <option value="08">08
+                    <option value="09">09
+                    <option value="10">10
+                    <option value="11">11
+                    <option value="12">12
+                    <option value="13">13
+                    <option value="14">14
+                    <option value="15">15
+                    <option value="16">16
+                    <option value="17">17
+                    <option value="18">18
+                    <option value="19">19
+                    <option value="20">20
+                    <option value="21">21
+                    <option value="22">22
+                    <option value="23">23
+                    <option value="24">24
+                    <option value="25">25
+                    <option value="26">26
+                    <option value="27">27
+                    <option value="28">28
+                    <option value="29">29
+                    <option value="30">30
+                    <option value="31">31
+                </select>
+                (required for Wii/DSi/3DS/Wii U)
+            </p>
+
+            <p>
+                <label>Additional data: </label>
+                <input type="text" name="aux" maxlength="16">
+                (device ID required for Switch 8.0.0+, leave empty otherwise)
+            </p>
+
+            <p>
+                <label>Inquiry number: </label>
+                <input type="text" name="inquiry" maxlength="11">
+                <input type="submit" value="Go">
+            </p>
+
+        </form>
+
+        <h3>Credits</h3>
+        RE and implementation by <a href="https://github.com/Dazzozo">Dazzozo</a><br>
+        SALT greetz: WulfyStylez and shinyquagsire23<br>
+        <a href="https://github.com/3dshax/ctr/commit/bcb3734b9a26d0fe7ef66f7d3814406fee797303">parentool</a> by <a href="https://github.com/neimod">neimod</a>, for the old (v0) key algorithm<br>
+        Key extraction: GaryOderNichts, zoogie, lifehackerhansol, Myria<br>
+        API: lifehackerhansol<br>
+
+        <h3>FAQ</h3>
+
+        <h4>What?</h4>
+        This tool generates the "master key" (unlock code) for 3DS, Wii U and Switch parental controls.<br>
+        Usually, one would have to contact Nintendo for this and explain the situation, or have it emailed to the account holder on file.<br>
+        The main advantage of this tool over others is that it supports more recent platforms.<br>
+        <br>
+        To use this, all that is required is the inquiry number displayed on the device. In some cases (v0/v1/v2), the date according to the system is also required.<br>
+        For the v4 algorithm (see below), the device ID of the console must be provided in the additional data field.<br>
+        The algorithm required will be automatically selected based on your input.<br>
+
+        <h4>What does this support?</h4>
+        The current list is:
+        <ul>
+            <li>Wii 1.0 -> 4.3: all regions (v0)</li>
+            <li>DSi 1.1 -> 1.4.5: all regions (v0)</li>
+            <li>3DS 1.0.0 -> 6.3.0: all regions (v0)</li>
+            <li>3DS 7.0.0 -> 7.1.0: all regions (v1)</li>
+            <li>3DS 7.2.0 -> 11.16.0: all regions (v2)</li>
+            <li>3DS "8.1.2" (key 13): USA, EUR, JPN (v2) - seemingly distributed only with not-for-sale Smash demo-carts?</li>
+            <li>Wii U 1.0.0 -> 4.1.0: all regions (v0)</li>
+            <li>Wii U 5.0.0 -> 5.5.5: all regions (v2)</li>
+            <li>Switch 1.0.0 -> 7.0.1: all regions (v3)</li>
+            <li>Switch 8.0.0 -> 15.0.0: all regions (v4) - requires device ID (not the serial number) in additional data field</li>
+        </ul>
+
+        <h4>What is the deal with v4 (Switch 8.0.0+)?</h4>
+        Nintendo has changed the algorithm to require a unique device ID that is stored on the console that can be difficult to obtain without exploiting the console in some way.<br>
+        The device ID can be derived from fuses or obtained from PRODINFO on the Switch.<br>
+        This limits the practical usage of the generator on these firmwares, as if one is able to obtain the device ID there are likely other ways to disable parental controls.<br>
+        There is currently no known way to derive/obtain the device ID through trivial/visible methods.<br>
+
+        <h4>Source code?</h4>
+        You can get the code for the backend <a href="https://github.com/eip618/mkey">here</a>.
+
+        <!-- y'all ever just kang? -->
+
+    </body>
+
+</html>
