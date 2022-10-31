@@ -11,6 +11,7 @@
 from typing import Optional, Union
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 import mkey
 
@@ -19,6 +20,7 @@ class BadInputError(ValueError):
     pass
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 async def get_mkey(platform: Optional[str] = None, month: Optional[int] = None, day: Optional[int] = None, inquiry: Optional[str] = None, aux: Optional[str] = None) -> int:
     generator = mkey.mkey_generator(debug=False)
@@ -44,7 +46,7 @@ async def api(platform: Optional[str] = None, month: Optional[int] = None, day: 
     return {"key": int(ret)}
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def webpage(platform: Optional[str] = None, month: Optional[int] = None, day: Optional[int] = None, inquiry: Optional[str] = None, aux: Optional[str] = None):
     if all(i is None for i in [platform, month, day, inquiry, aux]):
         with open("index.html", 'r') as f:
