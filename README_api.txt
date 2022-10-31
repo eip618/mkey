@@ -6,4 +6,5 @@
     - you'll want to do this in the background, in any way you prefer, systemd or otherwise
 3. Reverse proxy to said host:port
 
-The API is accessed by requesting GET to `http://example.com/<platform>/<inquiry>/<month>/<day>`.
+The API is accessed by requesting GET to `http://example.com/api?platform=<platform>&inquiry=<inquiry>&month=<month>&day=<day>`. Append `&aux=<aux>` if needed.
+An index.html exists as a browser interface.
