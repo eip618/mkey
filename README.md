@@ -5,6 +5,7 @@ Compatible with: 1.0-11.16 US,EU,JP,KR,TW,CN</br>
 - Attempt to unlock your parental controls from your 3DS's System Settings until it gives you an "Inquiry Number" (chose "I forgot" twice).
 - Next, read the rem comments in the "mkey.bat" script in a text editor for the remaining instructions, then run the same .bat script. 
 - Your masterkey should be generated, which you can use to unlock your 3DS in System Settings.
+Note: A windows exe is also provided in the release tab. You simply launch it and follow directions.
 
 mkey
 ====
