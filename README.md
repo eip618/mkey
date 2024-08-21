@@ -13,7 +13,7 @@ mkey is a master key generator for the Parental Controls functionality on variou
 
 This allows resetting Parental Controls (due to being locked out) without having to contact customer support.
 
-If you would just like to **use** this, with no concern for the code or how it works, visit: https://mkey.salthax.org/
+If you would just like to **use** this, with no concern for the code or how it works, visit: https://mkey.nintendohomebrew.com/
 
 v2 support was initially implemented in October 2015, and has been serving the above page since December 2015. v1 and Wii U support was added in January 2016. v0 support was added in April 2016. v3/Switch support was added in July 2017. v4 support was added in April 2019.
 
