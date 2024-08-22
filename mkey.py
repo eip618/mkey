@@ -129,7 +129,7 @@ class mkey_generator():
 
         if len(mkey_aes_key) != aes_key_len:
             raise ValueError("Size of AES key %s is invalid (expected 0x%02X, got 0x%02X)." %
-                file_name, aes_key_len, size)
+                (file_name, aes_key_len, size))
 
         return mkey_aes_key
 
@@ -143,7 +143,7 @@ class mkey_generator():
 
         if len(data) != mkey_len:
             raise ValueError("Size of masterkey.bin %s is invalid (expected 0x%02X, got 0x%02X)." %
-                file_name, mkey_len, size)
+                (file_name, mkey_len, size))
 
         mkey_data = struct.unpack("BB14x16s32s", data)
         return mkey_data
@@ -158,7 +158,7 @@ class mkey_generator():
 
         if len(mkey_hmac_key) != hmac_key_len:
             raise ValueError("Size of HMAC key %s is invalid (expected 0x%02X, got 0x%02X)." %
-                file_name, hmac_key_len, size)
+                (file_name, hmac_key_len, size))
 
         return mkey_hmac_key
 
@@ -300,12 +300,12 @@ class mkey_generator():
             # Verify the region field.
             if mkey_region != region:
                 raise ValueError("%s has an incorrect region field (expected 0x%02X, got 0x%02X)." %
-                    file_name, region, mkey_region)
+                    (file_name, region, mkey_region))
 
             # Verify the version field.
             if mkey_version != version and "no-versions" not in traits:
                 raise ValueError("%s has an incorrect version field (expected 0x%02X, got 0x%02X)." %
-                    file_name, version, mkey_version)
+                    (file_name, version, mkey_version))
 
             if self._dbg:
                 print("AES key:")
