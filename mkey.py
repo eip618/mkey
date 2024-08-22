@@ -31,6 +31,11 @@ from Crypto.Util.number import bytes_to_long, long_to_bytes
 try: import hexdump
 except ImportError: pass
 
+
+class InvalidInputError(ValueError):
+    pass
+
+
 class mkey_generator():
     __props = {
         "RVL": {
@@ -172,7 +177,7 @@ class mkey_generator():
             if "v0" in algorithms:
                 return "v0"
             else:
-                raise ValueError("v0 algorithm not supported by %s." % device)
+                raise InvalidInputError("v0 algorithm not supported by %s." % device)
         elif len(inquiry) == 10:
             version = int((int(inquiry) / 10000000) % 100)
 
@@ -183,14 +188,14 @@ class mkey_generator():
             elif "v3" in algorithms:
                 return "v3"
             else:
-                raise ValueError("v1/v2/v3 algorithms not supported by %s." % device)
+                raise InvalidInputError("v1/v2/v3 algorithms not supported by %s." % device)
         elif len(inquiry) == 6:
             if "v4" in algorithms:
                 return "v4"
             else:
-                raise ValueError("v4 algorithm not supported by %s." % device)
+                raise InvalidInputError("v4 algorithm not supported by %s." % device)
         else:
-            raise ValueError("Inquiry number must be 6, 8 or 10 digits.")
+            raise InvalidInputError("Inquiry number must be 6, 8 or 10 digits.")
 
     # CRC-32 implementation (v0).
     def _calculate_crc(self, poly, xorout, addout, inbuf):
@@ -260,7 +265,7 @@ class mkey_generator():
         # be a guaranteed set of regions available.
         #
         if region not in props["regions"]:
-            raise ValueError("%s is an invalid region for console %s." %
+            raise InvalidInputError("%s is an invalid region for console %s." %
                 (region, props["device"]))
 
         #
@@ -373,10 +378,10 @@ class mkey_generator():
             raise ValueError("v3/v4 attempted, but data directory doesn't exist or was not specified.")
 
         if algorithm == "v4" and not aux:
-            raise ValueError("v4 attempted, but no auxiliary string (device ID required).")
+            raise InvalidInputError("v4 attempted, but no auxiliary string (device ID required).")
 
         if algorithm == "v4" and len(aux) != 16:
-            raise ValueError("v4 attempted, but auxiliary string (device ID) of invalid length.")
+            raise InvalidInputError("v4 attempted, but auxiliary string (device ID) of invalid length.")
 
         if algorithm == "v4":
             version = int((inquiry / 10000) % 100)
@@ -440,7 +445,7 @@ class mkey_generator():
     def generate(self, inquiry, month = None, day = None, aux = None, device = None):
         inquiry = inquiry.replace(" ", "")
         if not inquiry.isdigit():
-            raise ValueError("Inquiry string must represent a decimal number.")
+            raise InvalidInputError("Inquiry string must represent a decimal number.")
 
         if month is None:
             month = datetime.date.today().month
@@ -448,14 +453,14 @@ class mkey_generator():
             day = datetime.date.today().day
 
         if month < 1 or month > 12:
-            raise ValueError("Month must be between 1 and 12.")
+            raise InvalidInputError("Month must be between 1 and 12.")
 
         if day < 1 or day > 31:
-            raise ValueError("Day must be between 1 and 31.")
+            raise InvalidInputError("Day must be between 1 and 31.")
 
         if not device: device = self.default_device
         if device not in self.devices:
-            raise ValueError("Unsupported device: %s." % device)
+            raise InvalidInputError("Unsupported device: %s." % device)
 
         # We can glean information about the required algorithm from the inquiry number.
         algorithm = self._detect_algorithm(device, inquiry)

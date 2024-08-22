@@ -16,9 +16,6 @@ from fastapi.staticfiles import StaticFiles
 import mkey
 
 
-class BadInputError(ValueError):
-    pass
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -26,10 +23,12 @@ async def get_mkey(platform: Optional[str] = None, month: Optional[int] = None, 
     generator = mkey.mkey_generator(debug=False)
 
     if platform not in ["RVL", "TWL", "CTR", "WUP", "HAC"]:
-        raise BadInputError(f"{platform} is an invalid platform.")
+        raise mkey.InvalidInputError(f"{platform} is an invalid platform.")
     master_key = None
     try:
         master_key = generator.generate(inquiry=inquiry, month=month, day=day, device=platform, aux=aux)
+    except mkey.InvalidInputError as e:
+        raise mkey.InvalidInputError(str(e))
     except ValueError as e:
         raise ValueError(str(e))
     return str(master_key)
@@ -39,7 +38,7 @@ async def get_mkey(platform: Optional[str] = None, month: Optional[int] = None, 
 async def api(platform: Optional[str] = None, month: Optional[int] = None, day: Optional[int] = None, inquiry: Optional[str] = None, aux: Optional[str] = None):
     try:
         ret = await get_mkey(platform, month, day, inquiry, aux)
-    except BadInputError as e:
+    except mkey.InvalidInputError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
