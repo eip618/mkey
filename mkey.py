@@ -61,6 +61,7 @@ class mkey_generator():
                 "hmac_file": "ctr_%02x.bin",
             },
             "v2": {
+                "regions": [0, 1, 2, 5, 9],
                 "mkey_file": "ctr_%02x_%02x.bin",
                 "aes_file": "ctr_aes_%02x.bin",
             },
@@ -75,6 +76,7 @@ class mkey_generator():
             },
             "v2": {
                 "traits": ["no-versions"],
+                "regions": [1, 2, 3],
                 "mkey_file": "wup_%02x.bin",
                 "aes_file": "wup_aes_%02x.bin",
             },
@@ -251,6 +253,15 @@ class mkey_generator():
         #
         region = int((inquiry / 1000000000) % 10)
         version = int((inquiry / 10000000) % 100)
+
+        #
+        # Sanity check a given region.
+        # At this point there are no more releases of consoles that use the v1/v2 algorithm, so in theory there should
+        # be a guaranteed set of regions available.
+        #
+        if region not in props["regions"]:
+            raise ValueError("%s is an invalid region for console %s." %
+                (region, props["device"]))
 
         #
         # The v2 algorithm uses a masterkey.bin file that can be updated independently of the rest of the system,
@@ -456,6 +467,7 @@ class mkey_generator():
 
         # Extract the properties for the selected algorithm.
         algoprops = props[algorithm]
+        algoprops["device"] = device
         algotraits = algoprops["traits"] if "traits" in algoprops else []
 
         # Destroy unused algorithm info.
