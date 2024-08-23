@@ -31,6 +31,11 @@ from Crypto.Util.number import bytes_to_long, long_to_bytes
 try: import hexdump
 except ImportError: pass
 
+
+class InvalidInputError(ValueError):
+    pass
+
+
 class mkey_generator():
     __props = {
         "RVL": {
@@ -61,6 +66,7 @@ class mkey_generator():
                 "hmac_file": "ctr_%02x.bin",
             },
             "v2": {
+                "regions": [0, 1, 2, 5, 9],
                 "mkey_file": "ctr_%02x_%02x.bin",
                 "aes_file": "ctr_aes_%02x.bin",
             },
@@ -75,6 +81,7 @@ class mkey_generator():
             },
             "v2": {
                 "traits": ["no-versions"],
+                "regions": [1, 2, 3],
                 "mkey_file": "wup_%02x.bin",
                 "aes_file": "wup_aes_%02x.bin",
             },
@@ -129,7 +136,7 @@ class mkey_generator():
 
         if len(mkey_aes_key) != aes_key_len:
             raise ValueError("Size of AES key %s is invalid (expected 0x%02X, got 0x%02X)." %
-                file_name, aes_key_len, size)
+                (file_name, aes_key_len, size))
 
         return mkey_aes_key
 
@@ -143,7 +150,7 @@ class mkey_generator():
 
         if len(data) != mkey_len:
             raise ValueError("Size of masterkey.bin %s is invalid (expected 0x%02X, got 0x%02X)." %
-                file_name, mkey_len, size)
+                (file_name, mkey_len, size))
 
         mkey_data = struct.unpack("BB14x16s32s", data)
         return mkey_data
@@ -158,7 +165,7 @@ class mkey_generator():
 
         if len(mkey_hmac_key) != hmac_key_len:
             raise ValueError("Size of HMAC key %s is invalid (expected 0x%02X, got 0x%02X)." %
-                file_name, hmac_key_len, size)
+                (file_name, hmac_key_len, size))
 
         return mkey_hmac_key
 
@@ -170,7 +177,7 @@ class mkey_generator():
             if "v0" in algorithms:
                 return "v0"
             else:
-                raise ValueError("v0 algorithm not supported by %s." % device)
+                raise InvalidInputError("v0 algorithm not supported by %s." % device)
         elif len(inquiry) == 10:
             version = int((int(inquiry) / 10000000) % 100)
 
@@ -181,14 +188,14 @@ class mkey_generator():
             elif "v3" in algorithms:
                 return "v3"
             else:
-                raise ValueError("v1/v2/v3 algorithms not supported by %s." % device)
+                raise InvalidInputError("v1/v2/v3 algorithms not supported by %s." % device)
         elif len(inquiry) == 6:
             if "v4" in algorithms:
                 return "v4"
             else:
-                raise ValueError("v4 algorithm not supported by %s." % device)
+                raise InvalidInputError("v4 algorithm not supported by %s." % device)
         else:
-            raise ValueError("Inquiry number must be 6, 8 or 10 digits.")
+            raise InvalidInputError("Inquiry number must be 6, 8 or 10 digits.")
 
     # CRC-32 implementation (v0).
     def _calculate_crc(self, poly, xorout, addout, inbuf):
@@ -253,6 +260,15 @@ class mkey_generator():
         version = int((inquiry / 10000000) % 100)
 
         #
+        # Sanity check a given region.
+        # At this point there are no more releases of consoles that use the v1/v2 algorithm, so in theory there should
+        # be a guaranteed set of regions available.
+        #
+        if region not in props["regions"]:
+            raise InvalidInputError("%s is an invalid region for console %s." %
+                (region, props["device"]))
+
+        #
         # The v2 algorithm uses a masterkey.bin file that can be updated independently of the rest of the system,
         # avoiding the need for recompiling the parental controls application. The format consists of an ID field,
         # used to identify the required key files for the user's inquiry number, a HMAC key encrypted using AES-128-CTR,
@@ -300,12 +316,12 @@ class mkey_generator():
             # Verify the region field.
             if mkey_region != region:
                 raise ValueError("%s has an incorrect region field (expected 0x%02X, got 0x%02X)." %
-                    file_name, region, mkey_region)
+                    (file_name, region, mkey_region))
 
             # Verify the version field.
             if mkey_version != version and "no-versions" not in traits:
                 raise ValueError("%s has an incorrect version field (expected 0x%02X, got 0x%02X)." %
-                    file_name, version, mkey_version)
+                    (file_name, version, mkey_version))
 
             if self._dbg:
                 print("AES key:")
@@ -362,10 +378,10 @@ class mkey_generator():
             raise ValueError("v3/v4 attempted, but data directory doesn't exist or was not specified.")
 
         if algorithm == "v4" and not aux:
-            raise ValueError("v4 attempted, but no auxiliary string (device ID required).")
+            raise InvalidInputError("v4 attempted, but no auxiliary string (device ID required).")
 
         if algorithm == "v4" and len(aux) != 16:
-            raise ValueError("v4 attempted, but auxiliary string (device ID) of invalid length.")
+            raise InvalidInputError("v4 attempted, but auxiliary string (device ID) of invalid length.")
 
         if algorithm == "v4":
             version = int((inquiry / 10000) % 100)
@@ -429,7 +445,7 @@ class mkey_generator():
     def generate(self, inquiry, month = None, day = None, aux = None, device = None):
         inquiry = inquiry.replace(" ", "")
         if not inquiry.isdigit():
-            raise ValueError("Inquiry string must represent a decimal number.")
+            raise InvalidInputError("Inquiry string must represent a decimal number.")
 
         if month is None:
             month = datetime.date.today().month
@@ -437,14 +453,14 @@ class mkey_generator():
             day = datetime.date.today().day
 
         if month < 1 or month > 12:
-            raise ValueError("Month must be between 1 and 12.")
+            raise InvalidInputError("Month must be between 1 and 12.")
 
         if day < 1 or day > 31:
-            raise ValueError("Day must be between 1 and 31.")
+            raise InvalidInputError("Day must be between 1 and 31.")
 
         if not device: device = self.default_device
         if device not in self.devices:
-            raise ValueError("Unsupported device: %s." % device)
+            raise InvalidInputError("Unsupported device: %s." % device)
 
         # We can glean information about the required algorithm from the inquiry number.
         algorithm = self._detect_algorithm(device, inquiry)
@@ -456,6 +472,7 @@ class mkey_generator():
 
         # Extract the properties for the selected algorithm.
         algoprops = props[algorithm]
+        algoprops["device"] = device
         algotraits = algoprops["traits"] if "traits" in algoprops else []
 
         # Destroy unused algorithm info.
