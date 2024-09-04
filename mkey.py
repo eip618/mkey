@@ -76,9 +76,9 @@ class mkey_generator():
             "traits": ["big-endian"],
             "algorithms": ["v0", "v2"],
             "v0": {
-                "poly": 0xEDBA6320,
+                "poly": 0x1EDC6F41,
                 "xorout": 0xAAAA,
-                "addout": 0x1657,
+                "addout": 0x226C,
             },
             "v2": {
                 "traits": ["no-versions"],
