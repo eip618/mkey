@@ -127,9 +127,9 @@ static const mkey_props _props[sizeof(mkey_devices) / sizeof(*mkey_devices)] =
         .algorithms = 0b00101,
         .big_endian = true,
         .v0 = {
-            .poly = 0xEDBA6320,
+            .poly = 0x1EDC6F41,
             .xorout = 0xAAAA,
-            .addout = 0x1657,
+            .addout = 0x226C,
         },
         .v2 = {
             .no_versions = true,
