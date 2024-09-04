@@ -63,6 +63,7 @@ class mkey_generator():
                 "addout": 0x1657,
             },
             "v1": {
+                "regions": [0, 1, 2],
                 "hmac_file": "ctr_%02x.bin",
             },
             "v2": {
